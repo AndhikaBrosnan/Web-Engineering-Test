@@ -1,0 +1,15 @@
+.filter-dropdown {
+  border-radius: 8px;
+  margin-left: 0.5em;
+}
+
+@media (max-width: 768px) {
+  .filter-form {
+    display: flex;
+    gap: 1em;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: left;
+    margin-bottom: 1em;
+  }
+}
