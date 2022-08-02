@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import "./styles.css";
 import { Pagination } from "semantic-ui-react";
@@ -8,12 +8,31 @@ import {
   updateSortingAction,
 } from "../../redux/actions/table";
 import moment from "moment";
+import {
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  TableContainer,
+  useForceUpdate,
+} from "@chakra-ui/react";
 
-const Table = () => {
+const TableComponent = () => {
   const dispatch = useDispatch();
   moment.locale();
+  const forceUpdate = useForceUpdate();
 
   const tableData = useSelector((state) => state.table);
+  const [localState, setLocalState] = useState([]);
+
+  useEffect(() => {
+    if (tableData) {
+      setLocalState(tableData);
+    }
+    forceUpdate(); // eslint-disable-next-line
+  }, [tableData]);
 
   useEffect(() => {
     fetchData(dispatch); // eslint-disable-next-line
@@ -28,7 +47,9 @@ const Table = () => {
     sortedTableData = tableData.sort((a, b) =>
       a.login.username.localeCompare(b.login.username)
     );
+
     updateSortingAction(dispatch, sortedTableData);
+    setLocalState(sortedTableData);
   };
 
   const onHandleSortName = () => {
@@ -36,13 +57,17 @@ const Table = () => {
     sortedTableData = tableData.sort((a, b) =>
       a.name.first.localeCompare(b.name.first)
     );
+
     updateSortingAction(dispatch, sortedTableData);
+    setLocalState(sortedTableData);
   };
 
   const onHandleSortEmail = () => {
     let sortedTableData = [...tableData];
     sortedTableData = tableData.sort((a, b) => a.email.localeCompare(b.email));
+
     updateSortingAction(dispatch, sortedTableData);
+    setLocalState(sortedTableData);
   };
 
   const onHandleSortGender = () => {
@@ -52,6 +77,7 @@ const Table = () => {
     );
 
     updateSortingAction(dispatch, sortedTableData);
+    setLocalState(sortedTableData);
   };
 
   const onHandleSortDate = () => {
@@ -60,34 +86,49 @@ const Table = () => {
       (a, b) => new Date(a.registered.date) - new Date(b.registered.date)
     );
     updateSortingAction(dispatch, sortedTableData);
+    setLocalState(sortedTableData);
   };
 
   return (
     <div className={`ui container user-table`}>
-      <table className="ui celled sortable table">
-        <thead>
-          <tr>
-            <th onClick={onHandleSortUsername}>Username</th>
-            <th onClick={onHandleSortName}>Name</th>
-            <th onClick={onHandleSortEmail}>Email</th>
-            <th onClick={onHandleSortGender}>Gender</th>
-            <th onClick={onHandleSortDate}>Registered Date</th>
-          </tr>
-        </thead>
-        {tableData.map((item, index) => (
-          <tbody key={index}>
-            <tr>
-              <td data-label="Username">{item.login.username}</td>
-              <td data-label="FullName">{item.name.first}</td>
-              <td data-label="Email">{item.email}</td>
-              <td data-label="Gender">{item.gender}</td>
-              <td data-label="RegisteredDate">
-                {moment(item.registered.date).format("DD-MM-YYYY h:mm")}
-              </td>
-            </tr>
-          </tbody>
-        ))}
-      </table>
+      {/* Start Of: trying table chakra UI*/}
+      <TableContainer>
+        <Table variant="simple">
+          <Thead backgroundColor="gray.200">
+            <Tr>
+              <Th onClick={onHandleSortUsername} cursor="pointer">
+                Username
+              </Th>
+              <Th onClick={onHandleSortName} cursor="pointer">
+                Name
+              </Th>
+              <Th onClick={onHandleSortEmail} cursor="pointer">
+                Email
+              </Th>
+              <Th onClick={onHandleSortGender} cursor="pointer">
+                Gender
+              </Th>
+              <Th onClick={onHandleSortDate} cursor="pointer">
+                Registered Date
+              </Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {localState.map((item, index) => (
+              <Tr key={index}>
+                <Td>{item.login.username}</Td>
+                <Td>{item.name.first}</Td>
+                <Td>{item.email}</Td>
+                <Td>{item.gender}</Td>
+                <Td>
+                  {moment(item.registered.date).format("DD-MM-YYYY h:mm")}
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      </TableContainer>
+      {/* End Of: trying table chakra UI*/}
 
       <Pagination
         className="right floated"
@@ -104,4 +145,4 @@ const Table = () => {
   );
 };
 
-export default Table;
+export default TableComponent;

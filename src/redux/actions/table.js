@@ -21,6 +21,7 @@ export const fetchPaginationData = async (dispatch, currentPage) => {
   dispatch({ type: FETCH_PAGINATION, payload: response });
 };
 
-export const updateSortingAction = (dispatch, sortedData) => {
-  dispatch({ type: UPDATE_SORTING, payload: sortedData });
+export const updateSortingAction = async (dispatch, sortedData) => {
+  const response = await sortedData;
+  dispatch({ type: UPDATE_SORTING, payload: response });
 };

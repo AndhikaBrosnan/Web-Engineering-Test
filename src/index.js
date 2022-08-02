@@ -5,10 +5,13 @@ import { Provider } from "react-redux";
 import { applyMiddleware, createStore } from "redux";
 import thunk from "redux-thunk";
 import reducers from "./redux/reducers";
+import { ChakraProvider } from "@chakra-ui/react";
 
 ReactDOM.render(
   <Provider store={createStore(reducers, applyMiddleware(thunk))}>
-    <App />
+    <ChakraProvider>
+      <App />
+    </ChakraProvider>
   </Provider>,
 
   document.querySelector("#root")
