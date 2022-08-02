@@ -6,5 +6,5 @@ Enzyme.configure({ adapter: new EnzymeAdapter() });
 
 test("App page Test", () => {
   const wrapper = shallow(<App />);
-  console.log("App Debug: ", wrapper.debug());
+  expect(wrapper.exists()).toBe(true);
 });
